@@ -1,0 +1,47 @@
+import logging
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
+
+# Konfiguration
+BOT_TOKEN = "7721657104:AAHLwIQE4bJQaxj8yPWxzdRQVughnmfEzsM# Ändere diese Zeile in deinem Bot-Code:
+GAME_URL = "https://github.com/tmohr2907-SEThjINSiN7/PixelSNAKEBit/pull/1"
+GAME_SHORT_NAME = "snake" # Muss EXAKT der Name von BotFather sein
+"
+# Die URL deiner GitHub Pages Seite
+GAME_URL = "https://DEIN_USERNAME.github.io/snake-game/"
+# Der 'Short Name', den du beim @BotFather mit /newgame vergeben hast
+GAME_SHORT_NAME = "snake" 
+
+# Logging einrichten
+logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Sendet eine Nachricht mit dem Spiel-Button."""
+    # Der Bot sendet das Spiel-Objekt
+    await update.message.reply_game(GAME_SHORT_NAME)
+
+async def play_game_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Reagiert auf den 'Play'-Button des Spiels."""
+    query = update.callback_query
+    
+    # Überprüfen, ob die Anfrage vom richtigen Spiel kommt
+    if query.game_short_name == GAME_SHORT_NAME:
+        # Hier wird die URL des GitHub-Spiels an den Telegram-Browser übergeben
+        await query.answer(url=GAME_URL)
+    else:
+        await query.answer("Spiel nicht gefunden.")
+
+def main():
+    # Bot erstellen
+    application = Application.builder().token(BOT_TOKEN).build()
+
+    # Handler hinzufügen
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CallbackQueryHandler(play_game_callback))
+
+    # Bot starten
+    print("Bot läuft...")
+    application.run_polling()
+
+if __name__ == "__main__":
+    main()
